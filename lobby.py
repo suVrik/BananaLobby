@@ -110,18 +110,13 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == '__main__':
-    print('Initializing the launcher')
+    print('Initializing lobby server')
 
-    while True:
-        print('Initializing lobby server')
+    Server = HTTPServer(('', 80), RequestHandler)
+    try:
+        Server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    Server.server_close()
 
-        Server = HTTPServer(('', 80), RequestHandler)
-        try:
-            Server.serve_forever()
-        except KeyboardInterrupt:
-            pass
-        Server.server_close()
-
-        print('Shutting down lobby server')
-
-    print('Shutting down the launcher')
+    print('Shutting down lobby server')
