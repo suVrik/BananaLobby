@@ -2,7 +2,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 import re
 
-ServerPort = 7788
 LobbyLifetime = 20
 LobbyList = {}
 
@@ -116,7 +115,7 @@ if __name__ == '__main__':
     while True:
         print('Initializing lobby server')
 
-        Server = HTTPServer(('', ServerPort), RequestHandler)
+        Server = HTTPServer(('', 80), RequestHandler)
         try:
             Server.serve_forever()
         except KeyboardInterrupt:
