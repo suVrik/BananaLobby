@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+import sys
 import re
 
 LobbyLifetime = 20
@@ -20,7 +21,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.InvalidRequest()
 
     def GetLobbies(self):
-        print('Get lobbies requrest')
+        print('Get lobbies requrest', flush = True)
 
         self.SuccessHeader()
         self.CleanUpLobbies()
@@ -29,7 +30,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(f'{Value["Name"]},{Value["Address"]}\n'.encode('utf-8'))
 
     def CreateLobby(self):
-        print('Create lobby requrest')
+        print('Create lobby requrest', flush = True)
 
         ContentLength = int(self.headers['Content-Length'])
         if ContentLength < 256:
@@ -45,25 +46,25 @@ class RequestHandler(BaseHTTPRequestHandler):
                             'Address': Address,
                             'LastUpdateTime': time.time()
                         }
-                        print(f'Successful create lobby requrest: "{Secret}" "{Name}" "{Address}"')
+                        print(f'Successful create lobby requrest: "{Secret}" "{Name}" "{Address}"', flush = True)
                         self.SuccessHeader()
                     else:
-                        print(f'Invalid address {Address} in create lobby request')
+                        print(f'Invalid address {Address} in create lobby request', flush = True)
                         self.ErrorHeader()
                 else:
-                    print(f'Invalid secret {Secret} in create lobby request')
+                    print(f'Invalid secret {Secret} in create lobby request', flush = True)
                     self.ErrorHeader()
             else:
-                print(f'Expected 3 items in create lobby request, got {len(DataItems)}')
+                print(f'Expected 3 items in create lobby request, got {len(DataItems)}', flush = True)
                 self.ErrorHeader()
         else:
-            print(f'Create lobby request is too long: {ContentLength} symbols')
+            print(f'Create lobby request is too long: {ContentLength} symbols', flush = True)
             self.ErrorHeader()
 
         self.CleanUpLobbies()
 
     def DestroyLobby(self):
-        print('Destroy lobby requrest')
+        print('Destroy lobby requrest', flush = True)
 
         ContentLength = int(self.headers['Content-Length'])
         if ContentLength < 256:
@@ -71,22 +72,22 @@ class RequestHandler(BaseHTTPRequestHandler):
             if re.fullmatch(SecretRegexp, Secret):
                 if Secret in LobbyList:
                     del LobbyList[Secret]
-                    print(f'Successful destroy lobby requrest: "{Secret}"')
+                    print(f'Successful destroy lobby requrest: "{Secret}"', flush = True)
                     self.SuccessHeader()
                 else:
-                    print(f'Lobby with secret {Secret} is not in the lobby list')
+                    print(f'Lobby with secret {Secret} is not in the lobby list', flush = True)
                     self.ErrorHeader()
             else:
-                print(f'Invalid secret {Secret} in destroy lobby request')
+                print(f'Invalid secret {Secret} in destroy lobby request', flush = True)
                 self.ErrorHeader()
         else:
-            print(f'Destroy lobby request is too long: {ContentLength} symbols')
+            print(f'Destroy lobby request is too long: {ContentLength} symbols', flush = True)
             self.ErrorHeader()
 
         self.CleanUpLobbies()
 
     def InvalidRequest(self):
-        print('Invalid request')
+        print('Invalid request', flush = True)
 
         self.ErrorHeader()
         self.CleanUpLobbies()
@@ -96,7 +97,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         for Secret, Value in list(LobbyList.items()):
             if CurrentTime - Value['LastUpdateTime'] > LobbyLifetime:
-                print(f'Lobby with secret {Secret} timed out')
+                print(f'Lobby with secret {Secret} timed out', flush = True)
                 del LobbyList[Secret]
 
     def ErrorHeader(self):
@@ -110,7 +111,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == '__main__':
-    print('Initializing lobby server')
+    print('Initializing lobby server', flush = True)
 
     Server = HTTPServer(('', 80), RequestHandler)
     try:
@@ -119,4 +120,4 @@ if __name__ == '__main__':
         pass
     Server.server_close()
 
-    print('Shutting down lobby server')
+    print('Shutting down lobby server', flush = True)
